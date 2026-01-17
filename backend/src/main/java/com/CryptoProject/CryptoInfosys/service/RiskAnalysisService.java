@@ -10,6 +10,15 @@ import java.util.List;
 @Service
 public class RiskAnalysisService {
 
+    private final NotificationService notificationService;
+
+    public RiskAnalysisService(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
+
+    // =========================================================
+    // 🔵 EXISTING METHOD (DO NOT TOUCH – FRONTEND DEPENDS ON THIS)
+    // =========================================================
     public List<RiskAlertDTO> analyze(List<PricingDTO> prices) {
 
         List<RiskAlertDTO> alerts = new ArrayList<>();
@@ -26,7 +35,7 @@ public class RiskAnalysisService {
                 alert.reason = "Extreme 24h price volatility";
             }
             // 🟡 MEDIUM RISK
-            else if (p.marketCap < 10000000000L) { // < ₹1,000 Cr
+            else if (p.marketCap < 10_000_000_000L) {
                 alert.riskLevel = "MEDIUM";
                 alert.reason = "Low market capitalization";
             }
@@ -37,6 +46,43 @@ public class RiskAnalysisService {
             }
 
             alerts.add(alert);
+        }
+
+        return alerts;
+    }
+
+    // =========================================================
+    // 🔥 NEW METHOD (NOTIFICATION-AWARE – SAFE ADDITION)
+    // =========================================================
+    public List<RiskAlertDTO> analyzeWithNotifications(
+            List<PricingDTO> prices,
+            String email
+    ) {
+
+        List<RiskAlertDTO> alerts = analyze(prices); // reuse existing logic
+
+        for (RiskAlertDTO alert : alerts) {
+
+            // 🔔 Trigger notification ONLY for HIGH risk
+            if ("HIGH".equals(alert.riskLevel)) {
+
+                boolean alreadySent =
+                        notificationService.hasNotification(
+                                email,
+                                "High Risk Alert",
+                                "WARNING"
+                        );
+
+                if (!alreadySent) {
+                    notificationService.createNotification(
+                            email,
+                            "High Risk Alert",
+                            alert.symbol +
+                            " is showing extreme volatility. Trade carefully.",
+                            "WARNING"
+                    );
+                }
+            }
         }
 
         return alerts;

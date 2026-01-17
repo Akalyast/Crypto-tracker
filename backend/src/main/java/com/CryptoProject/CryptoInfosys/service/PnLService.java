@@ -15,13 +15,17 @@ public class PnLService {
 
     private final TradeRepository tradeRepo;
     private final PricingService pricingService;
+    private final NotificationService notificationService;
+
 
     public PnLService(
             TradeRepository tradeRepo,
-            PricingService pricingService
+            PricingService pricingService,
+            NotificationService notificationService
     ) {
         this.tradeRepo = tradeRepo;
         this.pricingService = pricingService;
+        this.notificationService = notificationService;
     }
 
     // =========================================================
@@ -179,16 +183,60 @@ public class PnLService {
         return calculatePnL(userId).totalUnrealizedPnL;
     }
     public double getTotalRealizedPnL(String email) {
-        Long userId = getUserIdByEmail(email);
-        return calculatePnL(userId).totalRealizedPnL;
+    	Long userId = getUserIdByEmail(email);
+        double realized = getTotalRealizedPnL(userId);
+
+        // 🎉 PROFIT ALERT (only once)
+        if (realized >= 10000) {
+
+            boolean alreadySent =
+                    notificationService.hasNotification(
+                            email,
+                            "Profit Alert",
+                            "INFO"
+                    );
+
+            if (!alreadySent) {
+                notificationService.createNotification(
+                        email,
+                        "Profit Alert",
+                        "Congratulations! You earned ₹" + realized,
+                        "INFO"
+                );
+            }
+        }
+
+        return realized;
     }
 
     public double getTotalUnrealizedPnL(String email) {
-        Long userId = getUserIdByEmail(email);
-        return calculatePnL(userId).totalUnrealizedPnL;
+    	Long userId = getUserIdByEmail(email);
+        double unrealized = getTotalUnrealizedPnL(userId);
+
+        // 🚨 LOSS ALERT (only once)
+        if (unrealized <= -5000) {
+
+            boolean alreadySent =
+                    notificationService.hasNotification(
+                            email,
+                            "Loss Alert",
+                            "ALERT"
+                    );
+
+            if (!alreadySent) {
+                notificationService.createNotification(
+                        email,
+                        "Loss Alert",
+                        "Your portfolio is down ₹" + Math.abs(unrealized),
+                        "ALERT"
+                );
+            }
+        }
+
+        return unrealized;
     }
     private Long getUserIdByEmail(String email) {
         return tradeRepo.findUserIdByEmail(email);
     }
-
+    
 }

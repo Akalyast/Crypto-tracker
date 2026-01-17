@@ -21,15 +21,18 @@ public class TradeService {
     private final TradeRepository tradeRepo;
     private final UserRepository userRepo;
     private final HoldingRepository holdingRepo;
+    private final NotificationService notificationService;
 
     public TradeService(
             TradeRepository tradeRepo,
             UserRepository userRepo,
-            HoldingRepository holdingRepo
+            HoldingRepository holdingRepo,
+            NotificationService notificationService
     ) {
         this.tradeRepo = tradeRepo;
         this.userRepo = userRepo;
         this.holdingRepo = holdingRepo;
+        this.notificationService = notificationService;;
     }
 
     /* ================= ADD TRADE ================= */
@@ -49,6 +52,15 @@ public class TradeService {
         trade.setExecutedAt(LocalDateTime.now());
 
         Trade saved = tradeRepo.save(trade);
+        notificationService.createNotification(
+        	    email,
+        	    "Trade Executed",
+        	    request.getSide() + " " +
+        	    request.getQuantity() + " " +
+        	    request.getAssetSymbol() +
+        	    " @ ₹" + request.getPrice(),
+        	    "INFO"
+        	);
 
         rebuildHoldingsForUser(user);
 
@@ -74,14 +86,28 @@ public class TradeService {
         trade.setQuantity(request.getQuantity());
         trade.setPrice(request.getPrice());
         trade.setFee(request.getFee());
+        double oldQty = trade.getQuantity().doubleValue();
+        double oldPrice = trade.getPrice().doubleValue();
 
+        // 🔹 UPDATE TRADE
+        trade.setQuantity(request.getQuantity());
+        trade.setPrice(request.getPrice());
+        trade.setSide(request.getSide());
         Trade saved = tradeRepo.save(trade);
-
+        notificationService.createNotification(
+                email,
+                "Trade Updated",
+                "Your " + trade.getAssetSymbol() +
+                " trade was updated (Qty: " + oldQty + " → " + request.getQuantity() +
+                ", Price: ₹" + oldPrice + " → ₹" + request.getPrice() + ")",
+                "INFO"
+            );
         rebuildHoldingsForUser(user);
 
         return saved;
     }
 
+    /* ================= DELETE TRADE ================= */
     /* ================= DELETE TRADE ================= */
     @Transactional
     public void deleteTrade(Long id, String email) {
@@ -89,17 +115,30 @@ public class TradeService {
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Trade trade = tradeRepo.findById(id)
+        // 🔐 Fetch trade ONLY if it belongs to logged-in user
+        Trade trade = tradeRepo.findByIdAndUser(id, user)
                 .orElseThrow(() -> new RuntimeException("Trade not found"));
 
-        if (!trade.getUser().getId().equals(user.getId())) {
-            throw new RuntimeException("Unauthorized delete");
-        }
+        String asset = trade.getAssetSymbol();
+        double qty = trade.getQuantity().doubleValue();
+        double price = trade.getPrice().doubleValue();
 
+        // 🗑️ DELETE
         tradeRepo.delete(trade);
 
+        // 🔔 NOTIFICATION
+        notificationService.createNotification(
+                email,
+                "Trade Deleted",
+                "Your trade for " + asset +
+                " (Qty: " + qty + ", Price: ₹" + price + ") was deleted.",
+                "INFO"
+        );
+
+        // 🔄 REBUILD HOLDINGS
         rebuildHoldingsForUser(user);
     }
+
 
     /* ================= GET TRADES ================= */
     @Transactional(readOnly = true)

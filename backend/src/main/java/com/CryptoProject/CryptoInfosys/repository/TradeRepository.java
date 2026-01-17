@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TradeRepository extends JpaRepository<Trade, Long> {
@@ -18,5 +19,6 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     List<Trade> findByUserOrderByExecutedAtAsc(User user);
     @Query("SELECT u.id FROM User u WHERE u.email = :email")
     Long findUserIdByEmail(@Param("email") String email);
+    Optional<Trade> findByIdAndUser(Long id, User user);
 
 }
