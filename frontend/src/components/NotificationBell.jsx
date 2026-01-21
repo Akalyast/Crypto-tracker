@@ -7,7 +7,7 @@ export default function NotificationBell() {
   const [notifications, setNotifications] = useState([]);
   const bellRef = useRef(null);
 
-  /* ---------------- FETCH NOTIFICATIONS ---------------- */
+  /* ---------------- FETCH NOTIFICATIONS (UNCHANGED) ---------------- */
   const fetchNotifications = () => {
     api
       .get("/notifications")
@@ -34,7 +34,7 @@ export default function NotificationBell() {
   const markAsRead = async (id) => {
     try {
       await api.post(`/notifications/${id}/read`);
-      fetchNotifications(); // refresh state
+      fetchNotifications();
     } catch (err) {
       console.error("Mark as read failed", err);
     }
@@ -53,22 +53,48 @@ export default function NotificationBell() {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <div className="relative" ref={bellRef}>
-      
-      {/* BELL ICON */}
+    <div ref={bellRef} className="relative z-[9999]">
+      {/* 🔔 Bell */}
       <button
         onClick={() => setOpen(!open)}
-        className="relative p-2 rounded-full hover:bg-white/10 transition"
+        className="
+          relative
+          p-3
+          rounded-full
+          bg-white/5
+          hover:bg-white/10
+          transition-all
+          duration-300
+          hover:scale-105
+        "
       >
-        🔔
+        <span className="text-xl">🔔</span>
 
-        {/* UNREAD DOT */}
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full" />
+          <span
+            className="
+              absolute
+              -top-1
+              -right-1
+              min-w-[18px]
+              h-[18px]
+              px-1
+              rounded-full
+              bg-red-500
+              text-[11px]
+              font-bold
+              flex
+              items-center
+              justify-center
+              animate-pulse
+              shadow-lg
+            "
+          >
+            {unreadCount}
+          </span>
         )}
       </button>
 
-      {/* DROPDOWN */}
       {open && (
         <NotificationDropdown
           notifications={notifications}

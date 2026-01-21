@@ -9,7 +9,8 @@ import {
   MdAssessment,
   MdMenu,
   MdClose,
-  MdLogout
+  MdLogout,
+  MdLink,
 } from "react-icons/md";
 
 export default function Sidebar() {
@@ -28,11 +29,25 @@ export default function Sidebar() {
 
   const menuItems = [
     { name: "Dashboard", path: "/dashboard", icon: <MdDashboard size={22} /> },
-    { name: "Holdings", path: "/holdings", icon: <MdAccountBalanceWallet size={22} /> },
+    { name: "Exchanges", path: "/exchanges", icon: <MdLink size={22} /> },
+
+    {
+      name: "Holdings",
+      path: "/holdings",
+      icon: <MdAccountBalanceWallet size={22} />,
+    },
     { name: "Trades", path: "/trades", icon: <MdTrendingUp size={22} /> },
     { name: "Pricing", path: "/pricing", icon: <MdPriceCheck size={22} /> },
-    { name: "Risk Alerts", path: "/risk-alerts", icon: <MdWarning size={22} /> },
-    { name: "P&L Reports", path: "/pnl-reports", icon: <MdAssessment size={22} /> },
+    {
+      name: "Risk Alerts",
+      path: "/risk-alerts",
+      icon: <MdWarning size={22} />,
+    },
+    {
+      name: "P&L Reports",
+      path: "/pnl-reports",
+      icon: <MdAssessment size={22} />,
+    },
   ];
 
   return (
@@ -70,9 +85,10 @@ export default function Sidebar() {
               to={item.path}
               className={`
                 flex items-center gap-4 p-3 rounded-xl transition-all duration-300
-                ${active
-                  ? "bg-pink-600/45 text-white shadow-lg shadow-pink-500/40 scale-[1.03]"
-                  : "text-gray-300 hover:bg-white/10 hover:scale-[1.02] hover:shadow-md"
+                ${
+                  active
+                    ? "bg-pink-600/45 text-white shadow-lg shadow-pink-500/40 scale-[1.03]"
+                    : "text-gray-300 hover:bg-white/10 hover:scale-[1.02] hover:shadow-md"
                 }
               `}
             >
@@ -85,7 +101,6 @@ export default function Sidebar() {
 
       {/* FOOTER */}
       <div className="mt-auto pb-6 flex flex-col gap-3">
-
         {/* LOGOUT BUTTON */}
         <button
           onClick={handleLogout}
@@ -101,7 +116,9 @@ export default function Sidebar() {
 
         {/* COPYRIGHT */}
         {isOpen && (
-          <p className="text-gray-400 text-sm text-center">© 2025 CryptoTracker</p>
+          <p className="text-gray-400 text-sm text-center">
+            © 2025 CryptoTracker
+          </p>
         )}
       </div>
     </div>

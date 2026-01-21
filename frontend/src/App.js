@@ -11,6 +11,7 @@ import RiskAlerts from "./pages/RiskAlerts";
 import PnLReports from "./pages/PnLReports";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword"; // ✅ ADD THIS
+import ExchangeConnections from "./exchanges/ExchangeConnections"; // ✅ ADD THIS
 
 import { AuthProvider } from "./contexts/AuthContext";
 
@@ -23,9 +24,10 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} /> {/* ✅ */}
-
+          <Route path="/reset-password" element={<ResetPassword />} />{" "}
+          {/* ✅ */}
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/exchanges" element={<ExchangeConnections />} />
           <Route path="/holdings" element={<Holdings />} />
           <Route path="/trades" element={<Trades />} />
           <Route path="/pricing" element={<Pricing />} />

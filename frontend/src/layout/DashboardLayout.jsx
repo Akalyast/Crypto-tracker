@@ -1,5 +1,6 @@
 import Sidebar from "../components/Sidebar";
 import NotificationBell from "../components/NotificationBell";
+import UserProfile from "../components/UserProfile";
 
 export default function DashboardLayout({ children }) {
   return (
@@ -19,6 +20,7 @@ export default function DashboardLayout({ children }) {
 
           <div className="flex items-center gap-6">
             <NotificationBell />
+            <UserProfile />
           </div>
         </header>
 
