@@ -41,6 +41,7 @@ public class PricingService {
         circulatingSupply.put("BNB", 153_000_000.0);
         circulatingSupply.put("XRP", 54_000_000_000.0);
         circulatingSupply.put("TRX", 88_000_000_000.0);
+        circulatingSupply.put("ADA", 35_000_000_000.0);
 
         List<PriceSnapshot> latestSnapshots = priceRepo.findLatestPrices();
         List<PricingDTO> prices = new ArrayList<>();
