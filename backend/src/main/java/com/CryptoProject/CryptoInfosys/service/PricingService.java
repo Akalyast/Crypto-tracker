@@ -36,6 +36,11 @@ public class PricingService {
         circulatingSupply.put("BTC", 19_700_000.0);
         circulatingSupply.put("ETH", 120_000_000.0);
         circulatingSupply.put("SOL", 440_000_000.0);
+        circulatingSupply.put("USDT", 83_000_000_000.0);
+        circulatingSupply.put("USDC", 33_000_000_000.0);
+        circulatingSupply.put("BNB", 153_000_000.0);
+        circulatingSupply.put("XRP", 54_000_000_000.0);
+        circulatingSupply.put("TRX", 88_000_000_000.0);
 
         List<PriceSnapshot> latestSnapshots = priceRepo.findLatestPrices();
         List<PricingDTO> prices = new ArrayList<>();
