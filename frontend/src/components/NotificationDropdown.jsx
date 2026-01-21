@@ -18,9 +18,9 @@ export default function NotificationDropdown({
   return (
     <div
       className="
-        absolute
-        right-0
-        mt-4
+        fixed
+        top-16
+        right-6
         w-[380px]
         bg-[#0b0b24]
         border border-white/10
@@ -31,7 +31,9 @@ export default function NotificationDropdown({
     >
       {/* HEADER */}
       <div className="px-5 py-4 border-b border-white/10 flex justify-between items-center">
-        <h3 className="text-sm font-semibold tracking-wide">Notifications</h3>
+        <h3 className="text-sm font-semibold tracking-wide">
+          Notifications
+        </h3>
 
         <button
           onClick={onMarkAllAsRead}
@@ -42,7 +44,7 @@ export default function NotificationDropdown({
       </div>
 
       {/* LIST */}
-      <div className="max-h-96 overflow-y-auto custom-scrollbar">
+      <div className="max-h-[420px] overflow-y-auto custom-scrollbar">
         {notifications.length === 0 && (
           <div className="px-6 py-10 text-center text-sm text-gray-400">
             🎉 You’re all caught up!
@@ -67,22 +69,26 @@ export default function NotificationDropdown({
             `}
           >
             <div className="flex justify-between items-center mb-1">
-              <span className="font-medium text-sm">{n.title}</span>
+              <span className="font-medium text-sm">
+                {n.title}
+              </span>
 
               <span
                 className={`text-[10px] px-2 py-0.5 rounded-full ${
                   n.type === "WARNING"
                     ? "bg-red-500/20 text-red-400"
                     : n.type === "SUCCESS"
-                      ? "bg-green-500/20 text-green-400"
-                      : "bg-blue-500/20 text-blue-400"
+                    ? "bg-green-500/20 text-green-400"
+                    : "bg-blue-500/20 text-blue-400"
                 }`}
               >
                 {n.type}
               </span>
             </div>
 
-            <p className="text-xs text-gray-400 leading-relaxed">{n.message}</p>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              {n.message}
+            </p>
 
             {!n.read && (
               <span className="inline-block mt-2 text-[10px] text-blue-400">
